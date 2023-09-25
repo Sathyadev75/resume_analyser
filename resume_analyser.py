@@ -22,7 +22,7 @@ if uploaded_file is not None:
         f.write(uploaded_file.read())
 
     st.success(f"File '{file_name}' saved successfully!")
-import PyPDF2
+
 import spacy
 import re
 
@@ -31,15 +31,14 @@ nlp = spacy.load("en_core_web_sm")
 
 # Replace 'resume.pdf' with the path to your PDF file
 pdf_file_path = 'resume.pdf'
+import pdfplumber
 
 def extract_text_from_pdf(pdf_file_path):
-    text = ''
     try:
-        with open(pdf_file_path, 'rb') as pdf_file:
-            pdf_reader = PyPDF2.PdfFileReader(pdf_file)
-            for page_number in range(pdf_reader.numPages):
-                page = pdf_reader.getPage(page_number)
-                text += page.extractText()
+        with pdfplumber.open(pdf_file_path) as pdf:
+        text = ""
+        for page in pdf.pages:
+            text += page.extract_text()
     except Exception as e:
         print(f"Error extracting text from PDF: {str(e)}")
     
