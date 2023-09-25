@@ -28,15 +28,15 @@ import re
 nlp = spacy.load("en_core_web_sm")
 
 # Replace 'resume.pdf' with the path to your PDF file
-pdf_file_path = 'resume.pdf'
+file_name = 'resume.pdf'
 import pdfplumber
 
 def extract_text_from_pdf(pdf_file_path):
     try:
         with pdfplumber.open(pdf_file_path) as pdf:
-        text = ""
-        for page in pdf.pages:
-            text += page.extract_text()
+             text = ""
+             for page in pdf.pages:
+                   text += page.extract_text()
     except Exception as e:
         print(f"Error extracting text from PDF: {str(e)}")
     
