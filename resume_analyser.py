@@ -1,5 +1,6 @@
 import streamlit as st
 
+!pip install PYMuPDF
 
 import fitz  # PyMuPDF
 
