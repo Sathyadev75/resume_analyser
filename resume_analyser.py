@@ -17,7 +17,6 @@ except ImportError:
         subprocess.call(["pip", "install", "PyMuPDF"])
         st.success("PyMuPDF has been successfully installed.")
 
-!pip install PYMuPDF
 
 import fitz  # PyMuPDF
 
