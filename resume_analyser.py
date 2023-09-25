@@ -1,4 +1,21 @@
 import streamlit as st
+import streamlit as st
+import subprocess
+
+st.title("Install PyMuPDF with Streamlit")
+
+# Check if PyMuPDF is already installed
+try:
+    import fitz  # Attempt to import PyMuPDF
+    st.info("PyMuPDF is already installed.")
+except ImportError:
+    st.warning("PyMuPDF is not installed.")
+
+    # Provide an option to install PyMuPDF
+    if st.button("Install PyMuPDF"):
+        # Run the installation command
+        subprocess.call(["pip", "install", "PyMuPDF"])
+        st.success("PyMuPDF has been successfully installed.")
 
 !pip install PYMuPDF
 
