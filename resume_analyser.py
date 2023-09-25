@@ -1,24 +1,7 @@
 import streamlit as st
-import streamlit as st
+
 import subprocess
 
-st.title("Install PyMuPDF with Streamlit")
-
-# Check if PyMuPDF is already installed
-try:
-    import fitz  # Attempt to import PyMuPDF
-    st.info("PyMuPDF is already installed.")
-except ImportError:
-    st.warning("PyMuPDF is not installed.")
-
-    # Provide an option to install PyMuPDF
-    if st.button("Install PyMuPDF"):
-        # Run the installation command
-        subprocess.call(["pip", "install", "PyMuPDF"])
-        st.success("PyMuPDF has been successfully installed.")
-
-
-import fitz  # PyMuPDF
 
 st.title("Smart Resume Analyser")
 st.sidebar.markdown("# Choose User")
@@ -38,15 +21,69 @@ if uploaded_file is not None:
         f.write(uploaded_file.read())
 
     st.success(f"File '{file_name}' saved successfully!")
+import PyPDF2
+import spacy
+import re
 
-    # Use PyMuPDF to convert PDF pages to images
-    pdf_document = fitz.open(file_name)
-    pdf_images = []
-    for page_number in range(pdf_document.page_count):
-        page = pdf_document.load_page(page_number)
-        pdf_image = page.get_pixmap()
-        pdf_images.append(pdf_image)
+# Load a spaCy model for English
+nlp = spacy.load("en_core_web_sm")
 
-    # Display PDF pages as images
-    for page_number, pdf_image in enumerate(pdf_images):
-        st.image(pdf_image, caption=f"Page {page_number + 1}", use_column_width=True)
+# Replace 'resume.pdf' with the path to your PDF file
+pdf_file_path = 'resume.pdf'
+
+def extract_text_from_pdf(pdf_file_path):
+    text = ''
+    try:
+        with open(pdf_file_path, 'rb') as pdf_file:
+            pdf_reader = PyPDF2.PdfFileReader(pdf_file)
+            for page_number in range(pdf_reader.numPages):
+                page = pdf_reader.getPage(page_number)
+                text += page.extractText()
+    except Exception as e:
+        print(f"Error extracting text from PDF: {str(e)}")
+    
+    return text
+
+# Extract text from the PDF
+resume_text = extract_text_from_pdf(file_name)
+
+# Process the extracted text with spaCy
+doc = nlp(resume_text)
+
+# Extract various details from the resume
+email_addresses = [token.text for token in doc if token.like_email]
+phone_numbers = [re.sub(r'\D', '', token.text) for token in doc if token.like_phone]
+names = [ent.text for ent in doc.ents if ent.label_ == "PERSON"]
+addresses = [ent.text for ent in doc.ents if ent.label_ == "GPE" or ent.label_ == "LOC"]
+education = [chunk.text for chunk in doc.noun_chunks if "education" in chunk.text.lower()]
+experience = [chunk.text for chunk in doc.noun_chunks if "experience" in chunk.text.lower()]
+skills = []
+
+# Extracting skills (example: searching for specific keywords)
+skill_keywords = ["python", "java", "machine learning", "data analysis"]
+for token in doc:
+    for keyword in skill_keywords:
+        if keyword in token.text.lower() and token.is_alpha:
+            skills.append(token.text)
+
+# Print the extracted details
+print("Extracted Email Addresses:")
+print(email_addresses)
+
+print("\nExtracted Phone Numbers:")
+print(phone_numbers)
+
+print("\nExtracted Names:")
+print(names)
+
+print("\nExtracted Addresses:")
+print(addresses)
+
+print("\nEducation:")
+print(education)
+
+print("\nExperience:")
+print(experience)
+
+print("\nSkills:")
+print(skills)
