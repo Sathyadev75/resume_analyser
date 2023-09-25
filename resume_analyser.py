@@ -1,5 +1,5 @@
 import streamlit as st
-
+!pip install PyMuPDF
 import fitz  # PyMuPDF
 
 st.title("Smart Resume Analyser")
