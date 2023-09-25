@@ -2,8 +2,6 @@ import streamlit as st
 
 import subprocess
 
-pip install git+https://github.com/mstamy2/PyPDF2.git
-
 st.title("Smart Resume Analyser")
 st.sidebar.markdown("# Choose User")
 activities = ["Normal User", "Admin"]
